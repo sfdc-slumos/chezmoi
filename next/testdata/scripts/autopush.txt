@@ -1,0 +1,23 @@
+[!exec:git] stop
+
+mkhomedir golden
+mkhomedir
+
+exec git init --bare $WORK/dotfiles.git
+
+chezmoi init file://$WORK/dotfiles.git
+
+# create a commit
+cp golden/.bashrc $CHEZMOISOURCEDIR/dot_bashrc # FIXME use chezmoi add
+chezmoi git add dot_bashrc
+chezmoi git commit -- --message 'Add dot_bashrc'
+chezmoi git push
+
+# test that updating a file creates and pushes a commit
+chezmoi edit $HOME${/}.bashrc
+exec git --git-dir=$WORK/dotfiles.git log
+stdout 'Update dot_bashrc'
+
+-- home/user/.config/chezmoi/chezmoi.toml --
+[git]
+    autoPush = true

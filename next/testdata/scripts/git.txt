@@ -1,0 +1,15 @@
+chezmoi git hello
+exists ${CHEZMOISOURCEDIR}
+stdout hello
+
+-- bin/git --
+#!/bin/sh
+
+echo $*
+-- bin/git.cmd --
+@echo off
+setlocal
+set out=%*
+set out=%out:\=%
+echo %out%
+endlocal

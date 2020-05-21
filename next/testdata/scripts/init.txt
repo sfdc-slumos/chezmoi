@@ -1,0 +1,27 @@
+[!exec:git] stop
+
+mkhomedir golden
+mkhomedir
+
+# test that chezmoi init creates a git repo
+chezmoi init
+exists $CHEZMOISOURCEDIR/.git
+
+[short] stop
+
+# create a commit
+cp golden/.bashrc $CHEZMOISOURCEDIR/dot_bashrc
+chezmoi git add dot_bashrc
+chezmoi git commit -- --message 'Add dot_bashrc'
+
+# test that chezmoi init fetches git repo but does not apply
+chhome home2/user
+chezmoi init file://$WORK/home/user/.local/share/chezmoi
+exists $CHEZMOISOURCEDIR/.git
+! exists $HOME/.bashrc
+
+# test that chezmoi init --apply fetches a git repo and runs chezmoi apply
+chhome home3/user
+chezmoi init --apply file://$WORK/home/user/.local/share/chezmoi
+exists $CHEZMOISOURCEDIR/.git
+cmp $HOME/.bashrc golden/.bashrc

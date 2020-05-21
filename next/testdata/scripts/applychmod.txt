@@ -1,0 +1,22 @@
+[windows] stop
+
+[short] stop
+
+mkhomedir golden
+mkhomedir
+mksourcedir
+
+# test change file mode
+chmod 755 $HOME${/}.bashrc
+chezmoi apply
+cmpmod 644 $HOME/.bashrc
+
+# test change executable file mode
+chmod 644 $HOME/.binary
+chezmoi apply
+cmpmod 755 $HOME/.binary
+
+# test change directory mode
+chmod 755 $HOME/.ssh
+chezmoi apply
+cmpmod 700 $HOME/.ssh
