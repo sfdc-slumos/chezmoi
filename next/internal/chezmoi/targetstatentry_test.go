@@ -12,7 +12,6 @@ func TestTargetStateEntryApplyAndEqual(t *testing.T) {
 	for _, tc1 := range []struct {
 		name             string
 		targetStateEntry TargetStateEntry
-		usesSymlinks     bool
 	}{
 		{
 			name:             "absent",
@@ -52,18 +51,12 @@ func TestTargetStateEntryApplyAndEqual(t *testing.T) {
 					linkname: "bar",
 				},
 			},
-			usesSymlinks: true,
 		},
 	} {
 		t.Run(tc1.name, func(t *testing.T) {
-			if tc1.usesSymlinks && !Symlinks {
-				t.Skip("test uses symlinks")
-			}
-
 			for _, tc2 := range []struct {
-				name         string
-				root         interface{}
-				usesSymlinks bool
+				name string
+				root interface{}
 			}{
 				{
 					name: "not_present",
@@ -109,21 +102,15 @@ func TestTargetStateEntryApplyAndEqual(t *testing.T) {
 						"/home/user/bar": "",
 						"/home/user/foo": &vfst.Symlink{Target: "bar"},
 					},
-					usesSymlinks: true,
 				},
 				{
 					name: "existing_symlink_broken",
 					root: map[string]interface{}{
 						"/home/user/foo": &vfst.Symlink{Target: "bar"},
 					},
-					usesSymlinks: true,
 				},
 			} {
 				t.Run(tc2.name, func(t *testing.T) {
-					if tc2.usesSymlinks && !Symlinks {
-						t.Skip("test uses symlinks")
-					}
-
 					testFS, cleanup, err := vfst.NewTestFS(tc2.root)
 					require.NoError(t, err)
 					defer cleanup()

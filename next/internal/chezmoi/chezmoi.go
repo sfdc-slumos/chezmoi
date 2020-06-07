@@ -10,7 +10,6 @@ import (
 // Configuration constants.
 const (
 	POSIXFileModes   = runtime.GOOS != "windows"
-	Symlinks         = runtime.GOOS != "windows"
 	PathSeparator    = '/'
 	PathSeparatorStr = string(PathSeparator)
 	ignorePrefix     = "."

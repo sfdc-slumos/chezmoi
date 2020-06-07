@@ -19,7 +19,6 @@ func TestSourceStateApplyAll(t *testing.T) {
 		root               interface{}
 		sourceStateOptions []SourceStateOption
 		tests              []interface{}
-		usesSymlinks       bool
 	}{
 		{
 			name: "empty",
@@ -154,7 +153,6 @@ func TestSourceStateApplyAll(t *testing.T) {
 					vfst.TestSymlinkTarget("bar"),
 				),
 			},
-			usesSymlinks: true,
 		},
 		{
 			name: "symlink_template",
@@ -176,14 +174,9 @@ func TestSourceStateApplyAll(t *testing.T) {
 					vfst.TestSymlinkTarget("bar_linux"),
 				),
 			},
-			usesSymlinks: true,
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			if tc.usesSymlinks && !Symlinks {
-				t.Skip("test uses symlinks")
-			}
-
 			fs, cleanup, err := vfst.NewTestFS(tc.root)
 			require.NoError(t, err)
 			defer cleanup()
@@ -211,7 +204,6 @@ func TestSourceStateRead(t *testing.T) {
 		sourceStateOptions  []SourceStateOption
 		expectedError       string
 		expectedSourceState *SourceState
-		usesSymlinks        bool
 	}{
 		{
 			name: "empty",
@@ -297,7 +289,6 @@ func TestSourceStateRead(t *testing.T) {
 				},
 			},
 			expectedError: "/home/user/.local/share/chezmoi/foo: unsupported file type symlink",
-			usesSymlinks:  true,
 		},
 		{
 			name: "script",
@@ -531,10 +522,6 @@ func TestSourceStateRead(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			if tc.usesSymlinks && !Symlinks {
-				t.Skip("test uses symlinks")
-			}
-
 			fs, cleanup, err := vfst.NewTestFS(tc.root)
 			require.NoError(t, err)
 			defer cleanup()
