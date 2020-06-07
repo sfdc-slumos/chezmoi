@@ -42,18 +42,6 @@ func getDefaultSourceDir(bds *xdg.BaseDirectorySpecification) string {
 	return filepath.Join(bds.DataHome, "chezmoi")
 }
 
-func getEditor() (string, []string) {
-	editor := os.Getenv("VISUAL")
-	if editor == "" {
-		editor = os.Getenv("EDITOR")
-	}
-	if editor == "" {
-		editor = "vi"
-	}
-	components := whitespaceRegexp.Split(editor, -1)
-	return components[0], components[1:]
-}
-
 // isWellKnownAbbreviation returns true if word is a well known abbreviation.
 func isWellKnownAbbreviation(word string) bool {
 	_, ok := wellKnownAbbreviations[word]

@@ -787,8 +787,23 @@ func (c *Config) run(dir, name string, args []string) error {
 }
 
 func (c *Config) runEditor(args []string) error {
-	editorName, editorArgs := getEditor()
-	return c.run("", editorName, append(editorArgs, args...))
+	editor := os.Getenv("VISUAL")
+	if editor == "" {
+		editor = os.Getenv("EDITOR")
+	}
+	if editor == "" {
+		editor = "vi"
+	}
+
+	if path, err := exec.LookPath(editor); err == nil {
+		return c.run("", path, args)
+	}
+
+	// FIXME need a better heursitic to cope with spaces in $VISUAL/$EDITOR
+	components := whitespaceRegexp.Split(editor, -1)
+	editorName := components[0]
+	editorArgs := append(components[1:], args...)
+	return c.run("", editorName, editorArgs)
 }
 
 func (c *Config) marshal(data interface{}) error {

@@ -173,8 +173,11 @@ func cmdMkHomeDir(ts *testscript.TestScript, neg bool, args []string) {
 	if len(args) > 0 {
 		path = ts.MkAbs(args[0])
 	}
-	if err := vfst.NewBuilder().Build(vfs.OSFS, map[string]interface{}{
-		path: map[string]interface{}{
+	workDir := ts.Getenv("WORK")
+	relPath, err := filepath.Rel(workDir, path)
+	ts.Check(err)
+	if err := vfst.NewBuilder().Build(vfs.NewPathFS(vfs.OSFS, workDir), map[string]interface{}{
+		relPath: map[string]interface{}{
 			".bashrc": "# contents of .bashrc\n",
 			".binary": &vfst.File{
 				Perm:     0o755,
@@ -208,8 +211,11 @@ func cmdMkSourceDir(ts *testscript.TestScript, neg bool, args []string) {
 	if len(args) != 0 {
 		ts.Fatalf(("usage: mksourcedir"))
 	}
-	err := vfst.NewBuilder().Build(vfs.OSFS, map[string]interface{}{
-		ts.Getenv("CHEZMOISOURCEDIR"): map[string]interface{}{
+	workDir := ts.Getenv("WORK")
+	relPath, err := filepath.Rel(workDir, ts.Getenv("CHEZMOISOURCEDIR"))
+	ts.Check(err)
+	err = vfst.NewBuilder().Build(vfs.NewPathFS(vfs.OSFS, workDir), map[string]interface{}{
+		relPath: map[string]interface{}{
 			"dot_absent":            "",
 			"empty_dot_hushlogin":   "",
 			"executable_dot_binary": "#!/bin/sh\n",
