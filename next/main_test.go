@@ -208,11 +208,15 @@ func cmdMkSourceDir(ts *testscript.TestScript, neg bool, args []string) {
 	if neg {
 		ts.Fatalf("unsupported: ! mksourcedir")
 	}
-	if len(args) != 0 {
-		ts.Fatalf(("usage: mksourcedir"))
+	if len(args) > 1 {
+		ts.Fatalf("usage: mksourcedir [path]")
+	}
+	sourceDir := ts.Getenv("CHEZMOISOURCEDIR")
+	if len(args) > 0 {
+		sourceDir = ts.MkAbs(args[0])
 	}
 	workDir := ts.Getenv("WORK")
-	relPath, err := filepath.Rel(workDir, ts.Getenv("CHEZMOISOURCEDIR"))
+	relPath, err := filepath.Rel(workDir, sourceDir)
 	ts.Check(err)
 	err = vfst.NewBuilder().Build(vfs.NewPathFS(vfs.OSFS, workDir), map[string]interface{}{
 		relPath: map[string]interface{}{

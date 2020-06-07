@@ -6,8 +6,6 @@ import (
 	"path"
 )
 
-// FIXME add PathHasPrefix
-
 // PathJoin returns a clean, absolute path. If file is not an absolute path then
 // it is joined on to dir.
 func PathJoin(dir, file string) string {

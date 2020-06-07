@@ -1,7 +1,5 @@
 package chezmoi
 
-// FIXME log return values
-
 import (
 	"log"
 	"os"

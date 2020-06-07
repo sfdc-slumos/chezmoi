@@ -480,9 +480,7 @@ func (s *SourceState) addTemplateData(sourcePath string) error {
 	if err := format.Decode(data, &templateData); err != nil {
 		return fmt.Errorf("%s: %w", sourcePath, err)
 	}
-	fmt.Fprintf(os.Stderr, "TEMPLATE DATA ")
 	recursiveMerge(s.templateData, templateData)
-	fmt.Fprintf(os.Stderr, "PRIORITY      ")
 	recursiveMerge(s.templateData, s.priorityTemplateData)
 	return nil
 }
