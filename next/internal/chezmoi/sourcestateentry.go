@@ -1,15 +1,11 @@
 package chezmoi
 
-import (
-	"os"
-)
-
 // A SourceStateEntry represents the state of an entry in the source state.
 type SourceStateEntry interface {
 	Evaluate() error
 	Path() string
 	TargetStateEntry() (TargetStateEntry, error)
-	Write(s System, umask os.FileMode) error
+	Write(s System) error
 }
 
 // A SourceStateDir represents the state of a directory in the source state.
@@ -45,8 +41,8 @@ func (s *SourceStateDir) TargetStateEntry() (TargetStateEntry, error) {
 }
 
 // Write writes s to sourceStateDir.
-func (s *SourceStateDir) Write(sourceStateDir System, umask os.FileMode) error {
-	return sourceStateDir.Mkdir(s.path, 0o777&^umask)
+func (s *SourceStateDir) Write(sourceStateDir System) error {
+	return sourceStateDir.Mkdir(s.path, 0o777)
 }
 
 // Evaluate evaluates s and returns any error.
@@ -70,10 +66,10 @@ func (s *SourceStateFile) TargetStateEntry() (TargetStateEntry, error) {
 }
 
 // Write writes s to sourceStateDir.
-func (s *SourceStateFile) Write(sourceStateDir System, umask os.FileMode) error {
+func (s *SourceStateFile) Write(sourceStateDir System) error {
 	contents, err := s.Contents()
 	if err != nil {
 		return err
 	}
-	return sourceStateDir.WriteFile(s.path, contents, 0o666&^umask)
+	return sourceStateDir.WriteFile(s.path, contents, 0o666)
 }
